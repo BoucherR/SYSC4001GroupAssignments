@@ -97,21 +97,36 @@ int main() {
 	
     pid1 = fork();
 
+    // This looks long but it's not; if you understand what's going on in the first IF block, the rest of the code is just this block
+    // repeated three times. Once for each fork, basically.
+    // Each of the IF blocks is one child process, aka the process in which each child has one row of the first array, and multiplies
+    // this row against all of the columns in the second array
+
     if (pid1 == 0) { // it's a child
         printf("This is child 1 with pid %d and ppid %d \n", getpid(), getppid());
-        row = rowAtValue(0, M);
-        col = colAtValue(0, N);
-
-        printf("Row Values for Child 1:\n");
+        // The row that this fork will use
+        row = rowAtValue(0, M); 
+        printf("Child Process 1: Working with row: ");
         for (int i = 0; i<4; i++) {
-            printf("%d", row[i]);
+            printf("%d ", row[i]); // iterating over row array
         }
         printf("\n");
-        printf("Column Values for Child 1:\n");
+
+        int *dotProduct = malloc(sizeof(int)*4); // array that will hold final row that needs to be put into Q
+
         for (int i = 0; i<4; i++) {
-            printf("%d\n", col[i]);
+            col = colAtValue(i, N); // column in second matrix that will be multipled against the row this fork is responsible for
+            dotProduct[i] = (row[0] * col[0]) + (row[1] * col[1]) + (row[2] * col[2]) + (row[3] * col[3]); // dot product
         }
 
+        // At this point dotProduct now contains the completed row multiplication against all of the columns in the second array,
+        // and is done. 
+
+        printf("First row in solved Q matrix is: \n"); 
+        for (int i= 0; i<4; i++) {
+            printf("%d ", dotProduct[i]);
+        }
+        printf("\n");
     }
     else {
         pid2 = fork();
@@ -119,17 +134,24 @@ int main() {
         if (pid2 == 0) { // it's a child
             printf("This is child 2 with pid %d and ppid %d \n", getpid(), getppid());
             row = rowAtValue(1, M);
-            col = colAtValue(1, N);
-
-            printf("Row Values for Child 2:\n");
+            printf("Child Process 2: Working with row: ");
             for (int i = 0; i<4; i++) {
-                printf("%d", row[i]);
+                printf("%d ", row[i]); // iterating over row array
             }
             printf("\n");
-            printf("Column Values for Child 2:\n");
+
+            int *dotProduct = malloc(sizeof(int)*4);
+
             for (int i = 0; i<4; i++) {
-                printf("%d\n", col[i]);
+                col = colAtValue(i, N);
+                dotProduct[i] = (row[0] * col[0]) + (row[1] * col[1]) + (row[2] * col[2]) + (row[3] * col[3]);
             }
+
+            printf("Second row in solved Q matrix is: \n");
+            for (int i= 0; i<4; i++) {
+                printf("%d ", dotProduct[i]);
+            }
+            printf("\n");
         }
         else {
             pid3 = fork();
@@ -137,17 +159,24 @@ int main() {
             if (pid3 == 0) { // it's a child
                 printf("This is child 3 with pid %d and ppid %d \n", getpid(), getppid());
                 row = rowAtValue(2, M);
-                col = colAtValue(2, N);
-
-                printf("Row Values for Child 3:\n");
+                printf("Child Process 3: Working with row: ");
                 for (int i = 0; i<4; i++) {
-                    printf("%d", row[i]);
+                    printf("%d ", row[i]); // iterating over row array
                 }
                 printf("\n");
-                printf("Column Values for Child 3:\n");
+
+                int *dotProduct = malloc(sizeof(int)*4);
+
                 for (int i = 0; i<4; i++) {
-                    printf("%d\n", col[i]);
+                    col = colAtValue(i, N);
+                    dotProduct[i] = (row[0] * col[0]) + (row[1] * col[1]) + (row[2] * col[2]) + (row[3] * col[3]);
                 }
+
+                printf("Third row in solved Q matrix is: \n");
+                for (int i= 0; i<4; i++) {
+                    printf("%d ", dotProduct[i]);
+                }
+                printf("\n");
             }
             else {
                 pid4 = fork();
@@ -155,17 +184,24 @@ int main() {
                 if (pid4 == 0) { // it's a child
                     printf("This is child 4 with pid %d and ppid %d \n", getpid(), getppid());
                     row = rowAtValue(3, M);
-                    col = colAtValue(3, N);
-
-                    printf("Row Values for Child 4:\n");
+                    printf("Child Process 4: Working with row: ");
                     for (int i = 0; i<4; i++) {
-                        printf("%d", row[i]);
+                        printf("%d ", row[i]); // iterating over row array
                     }
                     printf("\n");
-                    printf("Column Values for Child 4:\n");
+
+                    int *dotProduct = malloc(sizeof(int)*4);
+
                     for (int i = 0; i<4; i++) {
-                        printf("%d\n", col[i]);
+                        col = colAtValue(i, N);
+                        dotProduct[i] = (row[0] * col[0]) + (row[1] * col[1]) + (row[2] * col[2]) + (row[3] * col[3]);
                     }
+
+                    printf("Fourth row in solved Q matrix is: \n");
+                    for (int i= 0; i<4; i++) {
+                        printf("%d ", dotProduct[i]);
+                    }
+                    printf("\n");
                 }
                 else // you're at the parent
                 {
