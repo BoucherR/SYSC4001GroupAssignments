@@ -8,7 +8,8 @@
 #include <stdbool.h>
 
 // Function that given an array, orders the two values largest to smallest
-void orderNumerically(int *array, int size) {
+void orderNumerically(int *array, int size, _Bool debug) {
+    _Bool swapPerformed = false;
     for (int i = 0; i < size; i++) {
         int temp = array[i];
 
@@ -17,8 +18,15 @@ void orderNumerically(int *array, int size) {
                 temp = array[i];
                 array[i] = array[i+1];
                 array[i+1] = temp;
+                swapPerformed = true;
+                if (debug) {
+                    printf(" Performed swapping \n");
+                }
             }
         }
+    }
+    if (swapPerformed == false && debug) {
+        printf(" No swapping \n");
     }
 }
 
@@ -47,6 +55,10 @@ _Bool isSorted(int *array, int size) {
 
 int main() {
 	pid_t pid1, pid2, pid3, pid4; // each of the four fork process ID's
+
+    _Bool isDebug;
+    printf( "Enter 1 if you want debug mode, enter 0 if you want regular mode: \n");
+    scanf("%d", &isDebug);
 
     // Creating shared memory
     void *shared_memory = (void *)0;
@@ -81,84 +93,92 @@ int main() {
     }
 
 	printf("--------------------- Program starting ---------------------\n\n");
+
+    printf("Starting array: ");
+    printArray(Q, 5);
 	
     pid1 = fork();
 
     if (pid1 == 0) { // it's a child
-        printf("This is child 1 with pid %d and ppid %d \n", getpid(), getppid());
-        
-        do {
+        while(isSorted(Q, 5) == false) {
             //wait
             sem_wait(sem);
 
             // critical section
-            orderNumerically(Q, 2);
-            printArray(Q, 5);
+            if (isDebug) {
+                printf("P1: ");
+            }
+            orderNumerically(Q, 2, isDebug);
 
             //signal
             sem_post(sem);
-        } while(isSorted(Q, 5) == false);
+        } 
         
     }
     else { // second fork that will deal with the second row
         pid2 = fork();
 
         if (pid2 == 0) { // it's a child
-            printf("This is child 2 with pid %d and ppid %d \n", getpid(), getppid());
-
-            do {
+            while(isSorted(Q, 5) == false) {
                 //wait
                 sem_wait(sem);
 
                 // critical section
-                orderNumerically((Q+1), 2);
-                printArray(Q, 5);
+                if (isDebug) {
+                    printf("P2: ");
+                }
+                orderNumerically((Q+1), 2, isDebug);
 
                 //signal
                 sem_post(sem);
-            } while(isSorted(Q, 5) == false);
+            } 
             
         }
         else { // third fork that will deal with the third row
             pid3 = fork();
 
             if (pid3 == 0) { // it's a child
-                printf("This is child 3 with pid %d and ppid %d \n", getpid(), getppid());
-
-                do {
+                while(isSorted(Q, 5) == false) {
                     //wait
                     sem_wait(sem);
 
                     // critical section
-                    orderNumerically((Q+2), 2);
-                    printArray(Q, 5);
+                    if (isDebug) {
+                        printf("P3: ");
+                    }
+                    orderNumerically((Q+2), 2, isDebug);
 
                     //signal
                     sem_post(sem);
-                } while(isSorted(Q, 5) == false);
+                } 
                 
             }
             else { // fourth fork that will deal with the fourth row
                 pid4 = fork();
 
                 if (pid4 == 0) { // it's a child
-                    printf("This is child 4 with pid %d and ppid %d \n", getpid(), getppid());
-
-                    do {
+                    while(isSorted(Q, 5) == false) {
                         //wait
                         sem_wait(sem);
 
                         // critical section
-                        orderNumerically((Q+3), 2);
-                        printArray(Q, 5);
+                        if (isDebug) {
+                            printf("P4: ");
+                        }
+                        orderNumerically((Q+3), 2, isDebug);
 
                         //signal
                         sem_post(sem);
-                    } while(isSorted(Q, 5) == false);
+                    } 
                 }
                 else // you're at the parent
                 {
-                
+                    while(isSorted(Q, 5) == false) {
+                            // do nothing
+                    }
+                    sleep(2);
+                    printf("Sorted array: ");
+                    printArray(Q, 5);
                 }
             }
         }
@@ -166,6 +186,5 @@ int main() {
     }
 
     sleep(1);
-    sem_unlink("mysem");
     exit(0);
 }
