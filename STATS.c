@@ -7,6 +7,14 @@
 #include <errno.h>
 #include <stdbool.h>
 
+// Function to prompt user to input 5 numbers that will make array to be sorted
+void createArray(int *array) {
+    printf("Enter the 5 numbers for the array to be sorted, hitting enter after each number: \n");
+    for (int i = 0; i< 5; i++) {
+        scanf("%d", &array[i]);
+    }
+}
+
 // Function that given an array, orders the two values largest to smallest
 void orderNumerically(int *array, int size, _Bool debug) {
     _Bool swapPerformed = false;
@@ -93,7 +101,8 @@ int main() {
     }
 
 	printf("--------------------- Program starting ---------------------\n\n");
-
+    
+    createArray(Q);
     printf("Starting array: ");
     printArray(Q, 5);
 	
@@ -179,6 +188,9 @@ int main() {
                     sleep(2);
                     printf("Sorted array: ");
                     printArray(Q, 5);
+                    printf("Minimum Value: %d \n", Q[4]);
+                    printf("Median Value: %d \n", Q[2]);
+                    printf("Maximum Value: %d \n", Q[0]);
                 }
             }
         }
