@@ -1,5 +1,5 @@
 ----------------------------------
-Assignment 1 README 
+MasterBranch README 
 ----------------------------------
 Authors: 
     Name: Ryan Boucher      Student #: 101049347
@@ -7,18 +7,13 @@ Authors:
 ----------------------------------
 
 
-Instructions on Running this Code
-----------------------------------
-    Part 1:
-        1. Build MMULTI1.c using gcc, and execute the resulting file to have the hard-coded 4x4 matrix be solved, as per the instructions. The output matrix, Q, will be displayed in the terminal
+Welcome to the master-branch for our SYSC4001 assignment repo. This repo exists to serve as the hub for the 4(?) assignments that we will be covering in this course. 
 
-    Part 2:
-        1. Build MMULTI2.c using gcc, and execute the resulting file to have process begin. The file will prompt you to input the number of variable threads that you want to use, will compute the multiplication of the two matrices, and will output the resulting matrix, Q, in the terminal. 
+As per one of our discussions, we'll go ahead with using a branch-per-assignment structure. 
 
-Additional Files Used in this Project
-----------------------------------
-    1. sm_arr.h -> Header used in MMULTI2.c that defines a structure of three 2x2 arrays, that are used to represent the two starting arrays, M and N, amd the resulting matrix derived from multiplying M and N, called Q. Specifically, this structure is used to define the shared memory in this file. 
+A branch currently exists for our last assignment, assignment 1, and a new one has been added for this assignment, assignment 2. 
 
+Last day of updating this README -> Saturday, March 16, 2019
 
 
 
