@@ -6,9 +6,6 @@
 #include <semaphore.h>
 #include <errno.h>
 
-#define TRUE 1
-#define FALSE 0
-
 // Function that given an array, orders the two values largest to smallest
 void orderNumerically(int *array, int size) {
     for (int i = 0; i < size; i++) {
@@ -87,7 +84,6 @@ int main() {
             //signal
             sem_post(sem);
         } while(1);
-        printf("SHOULDNT BE HERE");
         
     }
     else { // second fork that will deal with the second row
