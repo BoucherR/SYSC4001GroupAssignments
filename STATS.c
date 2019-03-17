@@ -21,19 +21,19 @@ void orderNumerically(int *array, int size, _Bool debug) {
     for (int i = 0; i < size; i++) {
         int temp = array[i];
 
-        if((i+1) < size) {
+        if((i+1) < size) { // need to swap values
             if (array[i] < array[i+1]) {
                 temp = array[i];
                 array[i] = array[i+1];
                 array[i+1] = temp;
                 swapPerformed = true;
-                if (debug) {
+                if (debug) { // only in debug mode
                     printf(" Performed swapping \n");
                 }
             }
         }
     }
-    if (swapPerformed == false && debug) {
+    if (swapPerformed == false && debug) { // only in debug mode
         printf(" No swapping \n");
     }
 }
@@ -64,8 +64,9 @@ _Bool isSorted(int *array, int size) {
 int main() {
 	pid_t pid1, pid2, pid3, pid4; // each of the four fork process ID's
 
+    // prompting the user if they want to be in debug mode
     _Bool isDebug;
-    printf( "Enter 1 if you want debug mode, enter 0 if you want regular mode: \n");
+    printf( "Enter 1 if you want debug mode, enter 0 if you want regular mode: \n"); // how the user enters debug mode
     scanf("%d", &isDebug);
 
     // Creating shared memory
@@ -84,11 +85,6 @@ int main() {
     }
 
     int* Q = shared_memory; // Assigning Q to shared memory, that each of the forks will modify
-    Q[0] = 10;
-    Q[1] = 9;
-    Q[2] = 11;
-    Q[3] = 5;
-    Q[4] = 7;
 
     // Starting Semaphore
     errno = 0;
@@ -102,19 +98,19 @@ int main() {
 
 	printf("--------------------- Program starting ---------------------\n\n");
     
-    createArray(Q);
+    createArray(Q); // prompt the user to create the values that will be put into the array
     printf("Starting array: ");
-    printArray(Q, 5);
+    printArray(Q, 5); // print the starting array
 	
     pid1 = fork();
 
     if (pid1 == 0) { // it's a child
-        while(isSorted(Q, 5) == false) {
+        while(isSorted(Q, 5) == false) { // exit when the array is sorted
             //wait
             sem_wait(sem);
 
             // critical section
-            if (isDebug) {
+            if (isDebug) { // only in debug
                 printf("P1: ");
             }
             orderNumerically(Q, 2, isDebug);
@@ -185,6 +181,7 @@ int main() {
                     while(isSorted(Q, 5) == false) {
                             // do nothing
                     }
+                    // Final output
                     sleep(2);
                     printf("Sorted array: ");
                     printArray(Q, 5);
