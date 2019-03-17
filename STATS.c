@@ -5,6 +5,7 @@
 #include <sys/shm.h>
 #include <semaphore.h>
 #include <errno.h>
+#include <stdbool.h>
 
 // Function that given an array, orders the two values largest to smallest
 void orderNumerically(int *array, int size) {
@@ -31,6 +32,19 @@ void printArray(int *array, int size) {
     printf("\n");
 }
 
+// Function to check if an array is sorted correctly. Used to determine the exit condition
+// on the do-while loops that each fork uses
+_Bool isSorted(int *array, int size) {
+    for (int i = 0; i< size; i++) { // iterate over array
+        if ((i+1) < size) { // keep in bounds of array
+            if (array[i] < array[i+1]) { // check that every element to left is greater than element to right
+                return false; // array is not sorted if above is true
+            }
+        }
+    }
+    return true;
+}
+
 int main() {
 	pid_t pid1, pid2, pid3, pid4; // each of the four fork process ID's
 
@@ -50,10 +64,10 @@ int main() {
     }
 
     int* Q = shared_memory; // Assigning Q to shared memory, that each of the forks will modify
-    Q[0] = 5;
-    Q[1] = 6;
-    Q[2] = 8;
-    Q[3] = 2;
+    Q[0] = 10;
+    Q[1] = 9;
+    Q[2] = 11;
+    Q[3] = 5;
     Q[4] = 7;
 
     // Starting Semaphore
@@ -83,7 +97,7 @@ int main() {
 
             //signal
             sem_post(sem);
-        } while(1);
+        } while(isSorted(Q, 5) == false);
         
     }
     else { // second fork that will deal with the second row
@@ -102,7 +116,7 @@ int main() {
 
                 //signal
                 sem_post(sem);
-            } while(1);
+            } while(isSorted(Q, 5) == false);
             
         }
         else { // third fork that will deal with the third row
@@ -121,7 +135,7 @@ int main() {
 
                     //signal
                     sem_post(sem);
-                } while(1);
+                } while(isSorted(Q, 5) == false);
                 
             }
             else { // fourth fork that will deal with the fourth row
@@ -140,7 +154,7 @@ int main() {
 
                         //signal
                         sem_post(sem);
-                    } while(1);
+                    } while(isSorted(Q, 5) == false);
                 }
                 else // you're at the parent
                 {
