@@ -60,6 +60,37 @@ Testing Discussion
 
     All other cases that have been tested have been successful.  
 
+    Output of First Test Case:
+
+        --------------------- Program starting ---------------------
+
+        Enter the 5 numbers for the array to be sorted, hitting enter after each number: 
+        5
+        6
+        8
+        2
+        7
+        Starting array: Array Values: 5 6 8 2 7 
+        Sorted array: Array Values: 8 7 6 5 2 
+        Minimum Value: 2 
+        Median Value: 6 
+        Maximum Value: 8
+
+    Output of Second Test Case:
+
+        --------------------- Program starting ---------------------
+
+        Enter the 5 numbers for the array to be sorted, hitting enter after each number: 
+        10
+        9
+        11
+        5
+        7
+        Starting array: Array Values: 10 9 11 5 7 
+        Sorted array: Array Values: 11 10 9 7 5 
+        Minimum Value: 5 
+        Median Value: 9 
+        Maximum Value: 11 
 
 ----------------------------------
 Additional Files Used in this Project
