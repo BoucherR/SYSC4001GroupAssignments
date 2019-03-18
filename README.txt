@@ -28,10 +28,69 @@ Algorithm to Sort Array
 
 
 ----------------------------------
-Testing Suite
+Fork Pseudo-Code:
 ----------------------------------
-    TO BE ADDED
 
+    pid = fork() // create the fork
+
+    if (pid == 0) { this is a child
+        while(arrayNotSorted( arrayBeingSorted )) {
+            // wait section
+            sem_wait() // wait on the semaphore until it is available, aka can be modified by this fork
+
+            // critical section
+            swapIfNeeded(arrayBeingSorted[values) // swap two values, if needed, that this fork is responsible for
+
+            // signal section
+            sem_post() // signal that the critical section is done, therefore the semaphore is now available to be taken by another fork
+        }
+    }
+
+
+    Four of the above forks exist in the code, each responsible for a specific two values in the array. When the array is finally sorted, the original parent will proceed to print the largest value, smallest value, and median value of the sorted array, as well as the sorted array itself. 
+
+
+----------------------------------
+Testing Discussion
+----------------------------------
+    This code has been tested with both sets of arrays that have been mandated: 
+        i)      Q = [5 6 8 2 7]
+        ii)     Q = [10 9 11 5 7]
+    With successful sorting being achieved in both test cases. 
+
+    All other cases that have been tested have been successful.  
+
+    Output of First Test Case:
+
+        --------------------- Program starting ---------------------
+
+        Enter the 5 numbers for the array to be sorted, hitting enter after each number: 
+        5
+        6
+        8
+        2
+        7
+        Starting array: Array Values: 5 6 8 2 7 
+        Sorted array: Array Values: 8 7 6 5 2 
+        Minimum Value: 2 
+        Median Value: 6 
+        Maximum Value: 8
+
+    Output of Second Test Case:
+
+        --------------------- Program starting ---------------------
+
+        Enter the 5 numbers for the array to be sorted, hitting enter after each number: 
+        10
+        9
+        11
+        5
+        7
+        Starting array: Array Values: 10 9 11 5 7 
+        Sorted array: Array Values: 11 10 9 7 5 
+        Minimum Value: 5 
+        Median Value: 9 
+        Maximum Value: 11 
 
 ----------------------------------
 Additional Files Used in this Project
