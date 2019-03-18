@@ -1,11 +1,11 @@
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/shm.h>
-#include <semaphore.h>
+
 #include <errno.h>
 #include <stdbool.h>
+#include <sys/shm.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/sem.h>
 
 void debugPrint(char* toPrint,_Bool isDebug, int forkVal)
 {
@@ -62,19 +62,52 @@ _Bool isSorted(int *array, int size) {
     return true;
 }
 
+static int set_semvalue(sem_id) {
+  union semun sem_union;
+  sem_union.val = 1;
+  if (semctl(sem_id, 0, SETVAL, sem_union) == -1) return (0);
+  return (1);
+}
 
+static int semaphore_p(sem_id) {
+  struct sembuf sem_b;
+
+  sem_b.sem_num = 0;
+  sem_b.sem_op = -1; /* P() */
+  sem_b.sem_flg = SEM_UNDO;
+
+  if (semop(sem_id, & sem_b, 1) == -1) {
+    fprintf(stderr, "semaphore_p failed\n");
+    return 0;
+  }
+  return 1;
+
+}
+
+static int semaphore_v(sem_id) {
+  struct sembuf sem_b;
+  sem_b.sem_num = 0;
+  sem_b.sem_op = 1; /* V() */
+  sem_b.sem_flg = SEM_UNDO;
+  if (semop(sem_id, & sem_b, 1) == -1) {
+    fprintf(stderr, "semaphore_v failed\n");
+    return (0);
+  }
+  return (1);
+}
 
 
 int main()
 {
     pid_t pid;
+    int numValues = 5;
     int numForks = 4;
     int forkVal = 0;
 
     // prompting the user if they want to be in debug mode
     _Bool isDebug;
     printf( "Enter 1 if you want debug mode, enter 0 if you want regular mode: \n"); // how the user enters debug mode
-    scanf("%d", &isDebug);
+    scanf("%i", &isDebug);
 
     // Creating shared memory
     void *shared_memory = (void *)0;
@@ -95,20 +128,24 @@ int main()
 
     // Starting Semaphore
     errno = 0;
-    sem_t *sem;
-    sem = sem_open("/mysem", O_CREAT|O_EXCL, 0, 1);
-    sem_unlink("/mysem");
-    if (sem == SEM_FAILED) {
-        int err1 = errno;
-        fprintf(stderr, "sem_open() failed.  errno:%d\n", err1);
+    int sem[numValues];
+    for (int sems = 0; sems < numValues; sems++)
+    {
+        sem[sems] = semget((key_t) 1234+sems, 1, 0666 | IPC_CREAT);
+        if (!set_semvalue(sem[sems])) {
+            fprintf(stderr, "Failed to initialize semaphore\n");
+            exit(EXIT_FAILURE);
+        }
     }
+
+
 
     printf("--------------------- Program starting ---------------------\n\n");
 
     createArray(Q); // prompt the user to create the values that will be put into the array
     printf("Starting array: ");
     printArray(Q, 5); // print the starting array
-
+    int offset;
     do
     {
         pid = fork();
@@ -116,23 +153,28 @@ int main()
         {
             forkVal++;
         }
+        offset = (forkVal % 2 != 0);        //Get the starting value as forkVal + offset, secondary as forkVal + (1-offset)
+
     }
     while(pid !=0 && forkVal < numForks);
 
     if (pid == 0) { // it's a child
         while(!isSorted(Q, 5)) { // exit when the array is sorted
-            //wait
-            sem_wait(sem);
 
-            // critical section
+            if (!semaphore_p(sem[forkVal])) exit(EXIT_FAILURE);
+            if (!semaphore_p(sem[forkVal+1])) exit(EXIT_FAILURE);
             orderNumerically(Q, 2, forkVal, isDebug);
+            if (!semaphore_v(sem[forkVal+1])) exit(EXIT_FAILURE);
+            if (!semaphore_v(sem[forkVal])) exit(EXIT_FAILURE);
+            for (int i =0; i< 10000000; i++);
 
-            //signal
-            sem_post(sem);
+
         }
+
     }
-    if(forkVal == numForks-1) // The last fork will deal with printing
+    if(pid != 0) // The main fork will deal with printing
     {
+        wait(NULL);
         printf("Sorted array: ");
         printArray(Q, 5);
         printf("Minimum Value: %d \n", Q[4]);
