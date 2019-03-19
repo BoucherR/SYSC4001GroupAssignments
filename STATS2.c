@@ -1,4 +1,4 @@
-
+#include <sys/wait.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <sys/shm.h>
@@ -6,6 +6,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/sem.h>
+
+union semun {
+    int val;
+    struct semid_ds *buf;
+    unsigned short int *array;
+};
+
 
 void debugPrint(char* toPrint,_Bool isDebug, int forkVal)
 {
@@ -62,14 +69,14 @@ _Bool isSorted(int *array, int size) {
     return true;
 }
 
-static int set_semvalue(sem_id) {
+static int set_semvalue(int sem_id) {
   union semun sem_union;
   sem_union.val = 1;
   if (semctl(sem_id, 0, SETVAL, sem_union) == -1) return (0);
   return (1);
 }
 
-static int semaphore_p(sem_id) {
+static int semaphore_p(int sem_id) {
   struct sembuf sem_b;
 
   sem_b.sem_num = 0;
@@ -84,7 +91,7 @@ static int semaphore_p(sem_id) {
 
 }
 
-static int semaphore_v(sem_id) {
+static int semaphore_v(int sem_id) {
   struct sembuf sem_b;
   sem_b.sem_num = 0;
   sem_b.sem_op = 1; /* V() */
