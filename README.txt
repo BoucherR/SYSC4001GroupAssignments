@@ -19,32 +19,25 @@ Instructions on Running this Code
 Algorithm to Sort Array
 ----------------------------------
     The algorithm to sort this array works as follows:
-        1. A semaphore is set up to determine whether or not the array to be sorted is being accessed and modified by a process.
-        2. The code forks four times, with each process being responsible for two elements in the array to be sorted. While the function isSorted() returns false for the array to be sorted, the fork will continually execute.
-        3: Each of the forks attempts to read from the array to be sorted, and if the semaphore allows the array to be accessed, the fork will run orderNumerically() at the appropriate two elements in the array.
-        4. Depending on whether the debug mode is true or false, the fork and orderNumerically() will print what it is currently doing.
-        5. The forks will continue to perform these operations until isSorted() returns true, for the shared memory array that has been sorted. 
-        6. The code will output the sorted array.
-
+        1. Two of the semaphores are attempted to have their locks taken by a process
+        2. Once both locks are taken by a process, it performs the switch
+        3. The process releases both of the locks
+        4. A slight wait occurs to help the process go smoothers
 
 ----------------------------------
 Fork Pseudo-Code:
 ----------------------------------
 
-    pid = fork() // create the fork
+    if (pid == 0) { // it's a child
+        while(!isSorted(Q, 5)) { // exit when the array is sorted
 
-    if (pid == 0) { this is a child
-        while(arrayNotSorted( arrayBeingSorted )) {
-            // wait section
-            sem_wait() // wait on the semaphore until it is available, aka can be modified by this fork
-
-            // critical section
-            swapIfNeeded(arrayBeingSorted[values) // swap two values, if needed, that this fork is responsible for
-
-            // signal section
-            sem_post() // signal that the critical section is done, therefore the semaphore is now available to be taken by another fork
+            if (!semaphore_p(sem[forkVal])) exit(EXIT_FAILURE); // attempting to get first lock
+            if (!semaphore_p(sem[forkVal+1])) exit(EXIT_FAILURE); // attempting to get second lock
+            orderNumerically(Q, 2, forkVal, isDebug); // swapping if needed
+            if (!semaphore_v(sem[forkVal+1])) exit(EXIT_FAILURE); // releasing lock
+            if (!semaphore_v(sem[forkVal])) exit(EXIT_FAILURE); // releasing lock 
+            for (int i =0; i< 10000000; i++); // wait 
         }
-    }
 
 
     Four of the above forks exist in the code, each responsible for a specific two values in the array. When the array is finally sorted, the original parent will proceed to print the largest value, smallest value, and median value of the sorted array, as well as the sorted array itself. 
