@@ -4,7 +4,9 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/msg.h>
+#include <ctype.h>
 #include "cliserv.h"
+
 #define MAX_TEXT 512
 
 
@@ -20,7 +22,7 @@ struct employee_data {
 typedef struct employee_data *node; //Define node as pointer of data type struct LinkedList
 node head;
 void parse(char command[]);
-void remove_spaces(char* source);
+char *trim_whitespace(char *str);
 void insert(char* ptr);
 void send_msg(char *msg);
 void check_name(char *ptr);
@@ -39,7 +41,6 @@ int main() {
 
     int running = 1;
     int msgid_rec;
-    int test;
 
     my_msg_st command_msg;
     long int msg_to_receive = 0;
@@ -84,7 +85,7 @@ void parse(char command[])
     printf("%s", command);
     char delim[] = "()";
     char *ptr = strtok(command, delim);
-    remove_spaces(ptr);
+    ptr = trim_whitespace(ptr);
     if(!strcmp(ptr, "Insert"))
     {
         insert(ptr);
@@ -134,8 +135,10 @@ void insert(char *ptr){
     char delim[] = ",";
 
     ptr = strtok(NULL, delim);
+    ptr = trim_whitespace(ptr);
     strcpy(temp->name, ptr);
     ptr = strtok(NULL, delim);
+    ptr = trim_whitespace(ptr);
     strcpy(temp->dept_name, ptr);
     ptr = strtok(NULL, delim);
     temp->emp_number = atoi(ptr);
@@ -275,6 +278,7 @@ void check_employee_number(char *ptr)
     node temp;
     temp = head;
     ptr = strtok(NULL, delim);
+    ptr = trim_whitespace(ptr);
     do
     {
         printf("%s:%s", temp->name, ptr);
@@ -300,6 +304,7 @@ void check(char *ptr)
     node temp;
     temp = head;
     ptr = strtok(NULL, delim);
+    ptr = trim_whitespace(ptr);
     int num = 0;
     char t[MAX_TEXT];
     snprintf(t, sizeof(t), "Employee Numbers:");
@@ -332,19 +337,26 @@ node create_node(){
     temp->next = NULL;// make next point to NULL
     return temp;//return the new node
 }
-void remove_spaces(char* source)
+
+
+char *trim_whitespace(char *str)
 {
-    char* i = source;
-    char* j = source;
-    while(*j != 0)
-    {
-        *i = *j++;
-        if(*i != ' ')
-        {
-            i++;
-        }
-    }
-    *i = 0;
+    char *end;
+
+      // Trim leading space
+    while(isspace((unsigned char)*str)) str++;
+
+    if(*str == 0)  // All spaces?
+        return str;
+
+      // Trim trailing space
+    end = str + strlen(str) - 1;
+    while(end > str && isspace((unsigned char)*end)) end--;
+
+      // Write new null terminator character
+    end[1] = '\0';
+
+    return str;
 }
 
 void send_msg(char *msg)
