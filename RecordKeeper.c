@@ -19,8 +19,8 @@ struct employee_data {
     struct employee_data *next;
 };
 
+//Function headers
 typedef struct employee_data *node; //Define node as pointer of data type struct LinkedList
-node head;
 void parse(char command[]);
 char *trim_whitespace(char *str);
 void insert(char* ptr);
@@ -32,6 +32,9 @@ void check_employee_number(char *ptr);
 void check(char *ptr);
 void delete(char *ptr);
 node create_node();
+
+//Globals
+node head;
 int msgid_send;
 struct employee_data first_emp;
 
@@ -45,6 +48,7 @@ int main() {
     my_msg_st command_msg;
     long int msg_to_receive = 0;
 
+    //Create both of our message queues
     msgid_rec= msgget((key_t)1234, 0666 | IPC_CREAT);
     if (msgid_rec == -1)
     {
@@ -58,7 +62,7 @@ int main() {
 
     while(running)
     {
-
+        //Continually try to recieve messages and parse their contents
         if (msgrcv(msgid_rec, (void *)&command_msg, BUFSIZ, msg_to_receive, 0) == -1)
         {
             fprintf(stderr, "msgrcv failed with error: %d\n", errno); exit(EXIT_FAILURE);
@@ -67,6 +71,7 @@ int main() {
 
 
     }
+    //Close each of our message queues
     if(msgctl(msgid_rec, IPC_RMID, 0) == -1)
     {
         fprintf(stderr, "msgctl(IPC_RMID) failed\n");
@@ -80,6 +85,7 @@ int main() {
     exit(EXIT_SUCCESS);
 }
 
+//Call the correct function based on the command sent from the administrator
 void parse(char command[])
 {
     char delim[] = "()";
@@ -114,19 +120,15 @@ void parse(char command[])
     {
         delete(ptr);
     }
-    else
+    else        //Default
     {
         send_msg("Invalid Command, please try again");
     }
 
-    // while(ptr != NULL)
-    // {
-    //     printf("'%s'\n", ptr);
-    //     ptr = strtok(NULL, delim);
-    // }
-
-
 }
+
+
+//Insert an employee node into our linked list
 
 void insert(char *ptr){
     node temp,p;// declare two nodes temp and p
@@ -134,10 +136,12 @@ void insert(char *ptr){
 
     char delim[] = ",)";
 
+    //Split the message into parameters
     ptr = strtok(NULL, delim);
     ptr = trim_whitespace(ptr);
     strcpy(temp->name, ptr);
     ptr = strtok(NULL, delim);
+    //Ensure we have the correct number of parameters
     if(ptr == NULL)
     {
         send_msg("Missing parameters");
@@ -180,6 +184,9 @@ void insert(char *ptr){
     return;
 }
 
+
+//Delete an employee nodes from our linked list. This involves pointing
+//the preceeding node to the following node and freeing the allocated memory
 void delete(char *ptr){
     node temp, lag;// declare two nodes temp and p
     temp = create_node();//createNode will return a new node with data = value and next pointing to NULL.
@@ -217,6 +224,7 @@ void delete(char *ptr){
     return;
 }
 
+//Iterate through the linked list and collect the name of first item that matches the employee number
 void check_name(char *ptr)
 {
     char delim[] = ",";
@@ -241,6 +249,7 @@ void check_name(char *ptr)
     send_msg("Employee not found");
 }
 
+//Iterate through the linked list and collect the dept_name of first item that matches the employee number
 void check_dept(char *ptr)
 {
     char delim[] = ",";
@@ -265,6 +274,7 @@ void check_dept(char *ptr)
     send_msg("Employee not found");
 }
 
+//Iterate through the linked list and collect the salary of first item that matches the employee number
 void check_salary(char *ptr)
 {
     char delim[] = ",";
@@ -289,6 +299,7 @@ void check_salary(char *ptr)
     send_msg("Employee not found");
 }
 
+//Iterate through the linked list and collect the employee number of the first item that matches the name
 void check_employee_number(char *ptr)
 {
     char delim[] = ",)";
@@ -302,7 +313,7 @@ void check_employee_number(char *ptr)
     ptr = trim_whitespace(ptr);
     do
     {
-        printf("%s:%s", temp->name, ptr);
+
         if(strcmp(temp->name, ptr) == 0)
         {
             char t[MAX_TEXT];
@@ -315,6 +326,8 @@ void check_employee_number(char *ptr)
     send_msg("Employee not found");
 }
 
+//Iterate through the linked list and collect all the employee numbers where the associated
+//employee works in the given department
 void check(char *ptr)
 {
     char delim[] = ",)";
@@ -331,7 +344,6 @@ void check(char *ptr)
     snprintf(t, sizeof(t), "Employee Numbers:");
     do
     {
-        printf("%s:%s", temp->name, ptr);
         if(strcmp(temp->dept_name, ptr) == 0)
         {
 
@@ -349,9 +361,7 @@ void check(char *ptr)
 }
 
 
-
-
-
+//Allocate the memory for a new employee node to be added to our linked list
 node create_node(){
     node temp; // declare a node
     temp = (node)malloc(sizeof(struct employee_data)); // allocate memory using malloc()
@@ -360,6 +370,7 @@ node create_node(){
 }
 
 
+//Trim the leading and trailing whitespace from a string
 char *trim_whitespace(char *str)
 {
     char *end;
@@ -380,6 +391,7 @@ char *trim_whitespace(char *str)
     return str;
 }
 
+//Send a message back to the Administrator with the given string contents
 void send_msg(char *msg)
 {
     my_msg_st to_send;

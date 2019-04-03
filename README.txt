@@ -19,7 +19,7 @@ Instructions on Running this Code
     Check(dept_name)
     Delete(emp_number)
 
-    Alternatively, you can copy/paste the test cases provided at the bottom of Testing.txt.
+    Alternatively, you can copy/paste the test cases provided at the bottom of Testing.txt. You can paste them all at once just keep in mind that you'll need to press enter once to submit the last request and that the formatting will look strange due to all the inputs coming in before any of the outputs.
 
     Some things to keep in mind when testing:
         1.Capital Letters are important in both the function name (check_name won't work, Check_name will) as well as the Department and Employee names. The Check and Check_employee_number functions require that the parameters are properly capitalized.

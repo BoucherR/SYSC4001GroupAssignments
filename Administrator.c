@@ -15,7 +15,7 @@ int main()
     char buffer[BUFSIZ];
     int selected;
 
-
+    //Initialize our message queues
     msgid_send = msgget((key_t)1234, 0666 | IPC_CREAT);
     if (msgid_send == -1)
     {
@@ -30,17 +30,19 @@ int main()
     while(running)
     {
         printf("Enter command: ");
-        //Add example commands or something here
+        //Collect entered commands
         fgets(buffer, BUFSIZ, stdin);
         command_msg.msg_type = 1;
         strcpy(command_msg.command, buffer);
 
+        //Add commands to msg and send to Record Keeper
         if (msgsnd(msgid_send, (void *)&command_msg, MAX_TEXT, 0) == -1)
         {
             fprintf(stderr, "msgsnd failed\n");
             exit(EXIT_FAILURE);
         }
 
+        //Wait for response from Record Keeper and print to console
         if (msgrcv(msgid_rec, (void *)&command_msg, BUFSIZ, 0, 0) == -1)
         {
             fprintf(stderr, "msgrcv failed with error: %d\n", errno); exit(EXIT_FAILURE);
