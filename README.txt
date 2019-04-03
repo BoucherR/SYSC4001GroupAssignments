@@ -8,7 +8,7 @@ Assignment 3 README
 ----------------------------------
 Instructions on Running this Code
 ----------------------------------
-    This code has many files, all of which can be compiled through the makefile. 
+    This code can be run by compiling and executing RecordKeeper.c, and Administrator.c. Messages passed into Administrator.c will be parsed and executed by RecordKeeper.c
 
 ----------------------------------
 Algorithm to Send Message
