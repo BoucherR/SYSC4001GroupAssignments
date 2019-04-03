@@ -1,0 +1,78 @@
+----------------------------------
+Assignment 3 Testing Discussion
+----------------------------------
+    Authors:
+        Name: Ryan Boucher      Student #: 101049347
+        Name: Simon Krol        Student #: 101047304
+----------------------------------
+Testing Discussion
+----------------------------------
+Test Cases (Left side is test case, right side is result)
+Keep in mind that the results don't include the additional text returned by the RecordKeeper( "Simon Krol" vs "Employee Name: Simon Krol")
+
+    //Each Insert statement should return Employee inserted successfully
+    Insert( Simon Krol, Quality Assurance, 24601, 65001)
+    Insert (Paul Ngyuen,Quality Assurance, 24602, 45000)
+    Insert (Sean Gordon, QualityAssurance, 24603, 12002)
+    Insert (Ryan Boucher ,Information Technology, 15669, 65000)
+    Insert (Joseph Boi-Ukeme , Teaching Assistant, 1, 65002)
+    Check_name(24601)                   //Simon Krol
+    Check_name(24600)                   //Employee not found
+    Check_department(15669)             //Information Technology
+    Check_department(15670)             //Employee not found
+    Check_salary(1)                     //65002
+    Check_salary(-1)                    //Employee not found
+    Check_employee_number(Sean Gordon)  //24603
+    Check_employee_number(sean Gordon)  //Employee not found
+    Check_employee_number(Shaun Gordon) //Employee not found
+    Check(Quality Assurance)            //24601 and 24602
+    Check(quality Assurance)            //Department has no employees
+    Check(QualityAssurance)             //24603
+    Check( Quality Assurance)           //24601 and 24602
+    Check(Teaching Assistant )          //1
+    Check(TeachingAssistant)            //Department has no employees
+    Delete(24601)                       //Delete was successful(1)
+    Check_name(24601)                   //Employee not found
+    Delete(24601)                       //Delete was unsuccessful(0)
+    Check(Quality Assurance)            //24602
+    Delete (24602)                      //Delete was successful(1)
+    Delete(24603)                       //Delete was successful(1)
+    Delete( 15669)                      //Delete was successful(1)
+    Delete(1)                           //Delete was successful(1)
+    Delete(1, 2)                        //Delete was unsuccessful(0)
+    Insert(Bond James, MI6, 007)        //Not enough arguments
+
+    The test cases seem to indicate that our program runs as expected. A few things to note are that each of the functions can be written with whitespace between the function name and the opening bracket, "Insert  (" or "Check_name(", this was intentional for ease of use. As well, it is important to keep in mind that Capital Letters are important in both Names and Department, "quality Assurance" is different from "Quality Assurance". As well, whitespace in names and department names is only important when between words, while leading and trailing whitespace is ignored, this means that " Teaching Assistant " and "Teaching Assistant" are identical while "TeachingAssistant" and "Teaching Assistant" are not. The last thing to keep in mind is parameter numbers, having too few parameters in the given function call will cause the RecordKeeper to reject the call. Having too many parameters will ignore the extra parameters, so Delete(1, 2) attempts to delete employee with an employee number of 1, while not using the 2.
+
+Test Cases without Expected Results (For ease of copying and pasting into the terminal):
+
+Insert( Simon Krol, Quality Assurance, 24601, 65001)
+Insert (Paul Ngyuen,Quality Assurance, 24602, 45000)
+Insert (Sean Gordon, QualityAssurance, 24603, 12002)
+Insert (Ryan Boucher ,Information Technology, 15669, 65000)
+Insert (Joseph Boi-Ukeme , Teaching Assistant, 1, 65002)
+Check_name(24601)
+Check_name(24600)
+Check_department(15669)
+Check_department(15670)
+Check_salary(1)
+Check_salary(-1)
+Check_employee_number(Sean Gordon)
+Check_employee_number(sean Gordon)
+Check_employee_number(Shaun Gordon)
+Check(Quality Assurance)
+Check(quality Assurance)
+Check(QualityAssurance)
+Check( Quality Assurance)
+Check(Teaching Assistant )
+Check(TeachingAssistant)
+Delete(24601)
+Check_name(24601)
+Delete(24601)
+Check(Quality Assurance)
+Delete (24602)
+Delete(24603)
+Delete( 15669)
+Delete(1)
+Delete(1, 2)
+Delete()

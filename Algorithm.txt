@@ -1,0 +1,23 @@
+----------------------------------
+Assignment 3 Testing Discussion
+----------------------------------
+    Authors:
+        Name: Ryan Boucher      Student #: 101049347
+        Name: Simon Krol        Student #: 101047304
+----------------------------------
+Algorithm
+----------------------------------
+    The basic algorithm behind our program is
+        1. The Record-Keeper runs constantly, and functions to receive messages from the Administrator
+        2. The Administrator runs constantly, and functions to send messages to the record keeper
+        3. The Administrator sends messages to the Record-Keeper as a string
+        4. The Record-Keeper parses the message, determining what the requested function is, and what parameters have been passed to it.
+        5. The Record-Keeper performs the function with given parameters
+        6. The Record-Kepper sends a message back to the Administrator with the result of the requested operation
+
+
+    This program has two main ideals behind it's functionality. The first, used to send and receive messages, is the client-server paradigm, very similar to that used in msg1.c and msg2.c during Lab5. Through the use of a message queue, each of our client and server can place a message on the queue, continue to work on other things and have the other process collect the message when it has the chance.
+
+    The second ideal is behind the storage and parsing of the employees stored within our records. Since both insertion and deletion are required, it didn't make sense to use an array to store data elements, instead, we decided to use a LinkedList, where each of our elements references the next element in the list as well. This makes it simple to both add and delete elements. Since each of our required functions is O(N), it also has no negative impact on functionality or efficiency.
+
+    The record keeper is responsible for maintaining the storage and parsing of our employee records, and after receiving instructions from the administrator, executes them and returns a message to the administrator.

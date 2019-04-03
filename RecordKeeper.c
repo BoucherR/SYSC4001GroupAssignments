@@ -82,9 +82,9 @@ int main() {
 
 void parse(char command[])
 {
-    printf("%s", command);
     char delim[] = "()";
     char *ptr = strtok(command, delim);
+
     ptr = trim_whitespace(ptr);
     if(!strcmp(ptr, "Insert"))
     {
@@ -132,18 +132,39 @@ void insert(char *ptr){
     node temp,p;// declare two nodes temp and p
     temp = create_node();//createNode will return a new node with data = value and next pointing to NULL.
 
-    char delim[] = ",";
+    char delim[] = ",)";
 
     ptr = strtok(NULL, delim);
     ptr = trim_whitespace(ptr);
     strcpy(temp->name, ptr);
     ptr = strtok(NULL, delim);
+    if(ptr == NULL)
+    {
+        send_msg("Missing parameters");
+        return;
+    }
     ptr = trim_whitespace(ptr);
     strcpy(temp->dept_name, ptr);
     ptr = strtok(NULL, delim);
+    if(ptr == NULL)
+    {
+        send_msg("Missing parameters");
+        return;
+    }
     temp->emp_number = atoi(ptr);
     ptr = strtok(NULL, delim);
+    if(ptr == NULL)
+    {
+        send_msg("Missing parameters");
+        return;
+    }
     temp->salary = atoi(ptr);
+    ptr = strtok(NULL, delim);
+    if(ptr == NULL)
+    {
+        send_msg("Missing parameters");
+        return;
+    }
 
     if(head == NULL){
         head = temp;     //when linked list is empty

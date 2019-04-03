@@ -1,5 +1,5 @@
 ----------------------------------
-Assignment 3 README 
+Assignment 3 README
 ----------------------------------
     Authors:
         Name: Ryan Boucher      Student #: 101049347
@@ -8,25 +8,26 @@ Assignment 3 README
 ----------------------------------
 Instructions on Running this Code
 ----------------------------------
-    This code can be run by compiling and executing RecordKeeper.c, and Administrator.c. Messages passed into Administrator.c will be parsed and executed by RecordKeeper.c
+    The code can be compiled through the Makefile by running "make". Each of the RecordKeeper and the Administrator should be run on different terminal windows by using ./Record and ./Admin respectively.
 
-----------------------------------
-Algorithm to Send Message
-----------------------------------
-    The algorithm to send messages are as follows:
-        1. The Record-Keeper runs constantly, and functions to receive messages from the Administrator
-        2. The Administrator runs constantly, and functions to send messages to the record keeper
-        3. The Administrator sends messages to the Record-Keeper as a string
-        4. The Record-Keeper parses the message, determining what the requested function is, and what parameters have been passed to it.
-        5. The Record-Keeper performs the function with given parameters
+    To Test the program, any of the following commands can be entered:
+    Insert(name, dept_name, emp_number, salary)
+    Check_name(emp_number)
+    Check_department(emp_number)
+    Check_salary(emp_number)
+    Check_employee_number(name)
+    Check(dept_name)
+    Delete(emp_number)
 
+    Alternatively, you can copy/paste the test cases provided at the bottom of Testing.txt.
 
-----------------------------------
-Testing Discussion
-----------------------------------
+    Some things to keep in mind when testing:
+        1.Capital Letters are important in both the function name (check_name won't work, Check_name will) as well as the Department and Employee names. The Check and Check_employee_number functions require that the parameters are properly capitalized.
+        2. Leading and Trailing whitespace is ignored in command names as well as in Department and Employee names. Insert ( Patrick Star , Rock , 25, 15) is equivalent to Insert(Patrick Star,Rock,25,15)
+        3. Quotation marks should NOT be included around Strings. They will cause issues with the string parsing
 
 
 ----------------------------------
 Additional Files Used in this Project
 ----------------------------------
-None
+cliserv.h -- This is a header file that contains the definition for our message queue struct
